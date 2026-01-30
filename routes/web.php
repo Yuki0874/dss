@@ -60,3 +60,14 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::post('logout', [AdminAuthController::class, 'logout'])->name('logout');
     });
 });
+
+Route::get('/setup-database', function () {
+    if (env('APP_ENV') !== 'production') {
+        return 'Not allowed';
+    }
+    
+    Artisan::call('migrate', ['--force' => true]);
+    Artisan::call('db:seed', ['--force' => true]);
+    
+    return 'Database setup complete! DELETE THIS ROUTE NOW!';
+})->middleware('web');
